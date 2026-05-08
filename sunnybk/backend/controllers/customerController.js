@@ -16,14 +16,53 @@ const getCustomers = async (req, res) => {
 const getCustomerById = async (req, res) => {
   try {
     const { id } = req.params;
-    const customerResult = await pool.query('SELECT * FROM customers WHERE id = $1', [id]);
-    if (customerResult.rows.length === 0) return res.status(404).json({ success: false, message: 'Customer not found' });
-    const enquiriesResult = await pool.query(
-      `SELECT e.id, e.enquiry_code, e.product_interest, e.status, e.channel, e.created_at,
-              emp.first_name || ' ' || emp.last_name AS assigned_to_name
-       FROM enquiries e LEFT JOIN employees emp ON e.assigned_to = emp.id
-       WHERE e.customer_id = $1 ORDER BY e.created_at DESC`, [id]);
-    res.json({ success: true, data: { customer: customerResult.rows[0], enquiries: enquiriesResult.rows } });
+    const custR = await pool.query('SELECT * FROM customers WHERE id = $1', [id]);
+    if (custR.rows.length === 0) return res.status(404).json({ success: false, message: 'Customer not found' });
+
+    const [enqR, visitsR, ordersR] = await Promise.all([
+      pool.query(`
+        SELECT e.id, e.enquiry_code, e.product_interest, e.status, e.channel,
+               e.priority, e.budget_estimate, e.created_at,
+               emp.first_name || ' ' || emp.last_name AS assigned_to_name,
+               (SELECT COUNT(*) FROM enquiry_logs el WHERE el.enquiry_id = e.id) AS log_count
+        FROM enquiries e LEFT JOIN employees emp ON e.assigned_to = emp.id
+        WHERE e.customer_id = $1 ORDER BY e.created_at DESC`, [id]),
+
+      pool.query(`
+        SELECT v.id, v.visit_code, v.scheduled_date, v.scheduled_time,
+               v.visit_type, v.status, v.duration_minutes,
+               eng.first_name || ' ' || eng.last_name AS engineer_name,
+               e.enquiry_code
+        FROM visits v
+        JOIN enquiries e ON v.enquiry_id = e.id
+        LEFT JOIN employees eng ON v.engineer_id = eng.id
+        WHERE v.customer_id = $1 ORDER BY v.scheduled_date DESC`, [id]),
+
+      pool.query(`
+        SELECT o.id, o.order_code, o.status, o.total_amount, o.deposit_amount,
+               o.deposit_paid, o.balance_paid, o.expected_install_date, o.created_at,
+               e.enquiry_code, e.product_interest,
+               emp.first_name || ' ' || emp.last_name AS assigned_to_name,
+               COALESCE((SELECT SUM(amount) FROM order_payments WHERE order_id=o.id AND payment_type='deposit'), 0) AS deposit_paid_total,
+               COALESCE((SELECT SUM(amount) FROM order_payments WHERE order_id=o.id AND payment_type='balance'), 0) AS balance_paid_total
+        FROM orders o
+        JOIN enquiries e ON o.enquiry_id = e.id
+        LEFT JOIN employees emp ON o.assigned_to = emp.id
+        WHERE o.customer_id = $1 ORDER BY o.created_at DESC`, [id]),
+    ]);
+
+    // Summary stats
+    const totalSpend  = ordersR.rows.filter(o => o.status !== 'Cancelled').reduce((s, o) => s + Number(o.total_amount || 0), 0);
+    const totalPaid   = ordersR.rows.reduce((s, o) => s + Number(o.deposit_paid_total || 0) + Number(o.balance_paid_total || 0), 0);
+    const stats = {
+      enquiry_count: enqR.rows.length,
+      visit_count:   visitsR.rows.length,
+      order_count:   ordersR.rows.length,
+      total_spend:   totalSpend,
+      total_paid:    totalPaid,
+    };
+
+    res.json({ success: true, data: { customer: custR.rows[0], enquiries: enqR.rows, visits: visitsR.rows, orders: ordersR.rows, stats } });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 };
 const createCustomer = async (req, res) => {

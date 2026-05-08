@@ -16,6 +16,7 @@ import VisitDetail from './pages/VisitDetail';
 import DailySchedule from './pages/DailySchedule';
 import CalendarView from './pages/CalendarView';
 import OrgSettings from './pages/OrgSettings';
+import CustomerDetail from './pages/CustomerDetail';
 import OrdersList from './pages/OrdersList';
 import OrderDetail from './pages/OrderDetail';
 import Reports from './pages/Reports';
@@ -61,6 +62,7 @@ function AppLayout() {
             <Route path="/reports" element={<RequireAdmin><Reports /></RequireAdmin>} />
             <Route path="/payments" element={<RequireAdmin><PendingPayments /></RequireAdmin>} />
             <Route path="/customers" element={<RequireAdmin><Customers /></RequireAdmin>} />
+            <Route path="/customers/:id" element={<RequireAdmin><CustomerDetail /></RequireAdmin>} />
             <Route path="/employees" element={<RequireAdmin><Employees /></RequireAdmin>} />
             <Route path="/settings" element={<RequireAdmin><OrgSettings /></RequireAdmin>} />
 
