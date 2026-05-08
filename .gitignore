@@ -1,0 +1,21 @@
+# Dependencies
+sunnybk/backend/node_modules/
+sunnybk/frontend/node_modules/
+
+# Environment variables (contains DB password and Gmail credentials)
+sunnybk/backend/.env
+
+# React build output
+sunnybk/frontend/build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
