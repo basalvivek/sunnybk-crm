@@ -11,6 +11,7 @@ const { getOrders, getOrderById, createOrder, updateOrder, addOrderLog, getOrder
 const { getOverview, getEnquiriesOverTime, getEnquiriesBySource, getRevenue, getEmployeePerformance } = require('../controllers/reportsController');
 const { getCalendarData } = require('../controllers/calendarController');
 const { getSettings, updateSettings } = require('../controllers/settingsController');
+const { getDashboard } = require('../controllers/dashboardController');
 
 // ── Public ──
 router.post('/auth/login', login);
@@ -59,6 +60,9 @@ router.put('/orders/:id',              authenticate, requireAdmin, updateOrder);
 router.post('/orders/:id/logs',        authenticate, requireAdmin, addOrderLog);
 router.get('/orders/:id/payments',       authenticate, requireAdmin, getOrderPayments);
 router.post('/orders/:id/record-payment', authenticate, requireAdmin, recordPayment);
+
+// Dashboard (admin only)
+router.get('/dashboard', authenticate, requireAdmin, getDashboard);
 
 // Organisation settings
 router.get('/settings',  authenticate, getSettings);

@@ -46,6 +46,7 @@ export const getOrderStats        = ()         => api.get('/orders/stats');
 export const getPendingPayments   = ()         => api.get('/orders/pending-payments');
 export const getOrderPayments     = (id)       => api.get(`/orders/${id}/payments`);
 export const recordPayment        = (id, data) => api.post(`/orders/${id}/record-payment`, data);
+export const getDashboardData  = ()     => api.get('/dashboard');
 export const getOrgSettings    = ()     => api.get('/settings');
 export const updateOrgSettings = (data) => api.put('/settings', data);
 export const getCalendarData   = (year, month) => api.get('/calendar', { params: { year, month } });
