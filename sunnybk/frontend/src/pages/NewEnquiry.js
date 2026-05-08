@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getCustomers, createEnquiry, getEmployees } from '../api';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { getCustomers, getCustomerById, createEnquiry, getEmployees } from '../api';
 import { PRODUCTS, CHANNELS, PRIORITIES, SOURCES } from '../components/helpers';
 
 export default function NewEnquiry() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const preloadCustomerId = searchParams.get('customer_id');
   const [employees, setEmployees] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [customerSearch, setCustomerSearch] = useState('');
@@ -35,6 +37,18 @@ export default function NewEnquiry() {
       if (emp.length > 0) setEnquiryForm(f => ({ ...f, created_by: emp[0].id }));
     });
   }, []);
+
+  // Pre-select customer if navigated from Customer Detail page
+  useEffect(() => {
+    if (!preloadCustomerId) return;
+    getCustomerById(preloadCustomerId)
+      .then(r => {
+        const c = r.data.data.customer;
+        setSelectedCustomer(c);
+        setIsNewCustomer(false);
+      })
+      .catch(() => {});
+  }, [preloadCustomerId]);
 
   useEffect(() => {
     if (customerSearch.length >= 2) {
