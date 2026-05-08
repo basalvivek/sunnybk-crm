@@ -173,6 +173,30 @@ button { cursor: pointer; font-family: inherit; }
 .visit-meta-item strong { color: #1a2332; }
 .visit-actions   { display: flex; gap: 8px; flex-direction: column; align-items: flex-end; }
 
+/* ===================== CALENDAR ===================== */
+.cal-header { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 2px solid #e8eaf0; }
+.cal-day-header { padding: 10px 0; text-align: center; font-size: 11px; font-weight: 700; color: #7a8a9a; text-transform: uppercase; letter-spacing: 0.5px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+.cal-cell { min-height: 110px; padding: 8px; cursor: pointer; border-bottom: 1px solid #f0f2f5; border-right: 1px solid #f0f2f5; background: #fff; transition: background 0.1s; }
+.cal-cell:nth-child(7n) { border-right: none; }
+.cal-cell:hover { background: #f8f9fb; }
+.cal-cell-empty { background: #fafbfc !important; cursor: default; }
+.cal-cell-today { background: #fefce8 !important; }
+.cal-cell-selected { background: #eff6ff !important; }
+.cal-day-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: #1a2332; margin-bottom: 4px; }
+.cal-day-num-today { background: #1a5c8a; color: #fff; font-weight: 700; }
+.cal-chips { display: flex; flex-direction: column; gap: 2px; }
+.cal-chip { font-size: 10px; line-height: 16px; padding: 0 5px; border-radius: 3px; color: #fff; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cal-chip-more { font-size: 10px; color: #7a8a9a; font-weight: 600; padding-left: 2px; }
+.cal-panel-section { font-size: 11px; font-weight: 700; color: #7a8a9a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.cal-event-card { padding: 10px 12px; border-radius: 8px; border-left: 3px solid; transition: opacity 0.1s; }
+.cal-event-card:hover { opacity: 0.82; }
+.cal-event-top { display: flex; justify-content: space-between; margin-bottom: 2px; }
+.cal-event-code { font-size: 11px; font-weight: 700; color: #7a8a9a; }
+.cal-event-name { font-weight: 600; font-size: 13px; color: #1a2332; }
+.cal-event-sub { font-size: 12px; color: #5a6a7a; margin-top: 2px; }
+.cal-event-postcode { font-size: 11px; color: #9aa0b0; margin-top: 2px; }
+
 /* ===================== LOADING ===================== */
 .loading { padding: 40px; text-align: center; color: #9aa0b0; font-size: 14px; }
 

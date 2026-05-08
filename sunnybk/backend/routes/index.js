@@ -9,6 +9,8 @@ const { getEmployees, getDepartments, createEmployee, updateEmployee, createDepa
 const { getVisits, getVisitById, createVisit, updateVisit, rescheduleVisit, completeVisit, cancelVisit } = require('../controllers/visitController');
 const { getOrders, getOrderById, createOrder, updateOrder, addOrderLog, getOrderStats, getPendingPayments, getOrderPayments, recordPayment } = require('../controllers/orderController');
 const { getOverview, getEnquiriesOverTime, getEnquiriesBySource, getRevenue, getEmployeePerformance } = require('../controllers/reportsController');
+const { getCalendarData } = require('../controllers/calendarController');
+const { getSettings, updateSettings } = require('../controllers/settingsController');
 
 // ── Public ──
 router.post('/auth/login', login);
@@ -57,6 +59,13 @@ router.put('/orders/:id',              authenticate, requireAdmin, updateOrder);
 router.post('/orders/:id/logs',        authenticate, requireAdmin, addOrderLog);
 router.get('/orders/:id/payments',       authenticate, requireAdmin, getOrderPayments);
 router.post('/orders/:id/record-payment', authenticate, requireAdmin, recordPayment);
+
+// Organisation settings
+router.get('/settings',  authenticate, getSettings);
+router.put('/settings',  authenticate, requireAdmin, updateSettings);
+
+// Calendar (admin only)
+router.get('/calendar', authenticate, requireAdmin, getCalendarData);
 
 // Reports (admin only)
 router.get('/reports/overview',             authenticate, requireAdmin, getOverview);

@@ -1,14 +1,16 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useOrg } from '../context/OrgContext';
 
 const ADMIN_NAV = [
   { section: 'Overview',   items: [{ to: '/', label: 'Dashboard', icon: '⬛' }] },
   { section: 'Enquiries',  items: [{ to: '/enquiries', label: 'All Enquiries', icon: '📋' }, { to: '/enquiries/new', label: 'New Enquiry', icon: '➕' }] },
-  { section: 'Visits',     items: [{ to: '/visits', label: 'All Visits', icon: '📅' }, { to: '/schedule', label: 'Daily Schedule', icon: '🗓️' }, { to: '/visits/schedule', label: 'Schedule Visit', icon: '➕' }] },
+  { section: 'Visits',     items: [{ to: '/visits', label: 'All Visits', icon: '📅' }, { to: '/schedule', label: 'Daily Schedule', icon: '🗓️' }, { to: '/calendar', label: 'Calendar', icon: '📆' }, { to: '/visits/schedule', label: 'Schedule Visit', icon: '➕' }] },
   { section: 'Orders',     items: [{ to: '/orders', label: 'All Orders', icon: '🛒' }, { to: '/payments', label: 'Pending Payments', icon: '💳' }] },
   { section: 'Reports',    items: [{ to: '/reports', label: 'Reports', icon: '📊' }] },
   { section: 'Customers',  items: [{ to: '/customers', label: 'Customers', icon: '👥' }] },
   { section: 'Team',       items: [{ to: '/employees', label: 'Employees', icon: '🧑‍💼' }] },
+  { section: 'System',     items: [{ to: '/settings', label: 'Org Settings', icon: '⚙️' }] },
 ];
 
 const EMPLOYEE_NAV = [
@@ -18,6 +20,7 @@ const EMPLOYEE_NAV = [
 
 export default function Sidebar() {
   const { user, isAdmin, logout } = useAuth();
+  const { org } = useOrg();
   const navigate = useNavigate();
   const navItems = isAdmin ? ADMIN_NAV : EMPLOYEE_NAV;
 
@@ -29,8 +32,12 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        <h2>Sunny BK</h2>
-        <p>CRM System</p>
+        {org.logo_data && (
+          <img src={org.logo_data} alt="Logo"
+            style={{ maxWidth: '100%', maxHeight: 48, objectFit: 'contain', marginBottom: 8, display: 'block' }} />
+        )}
+        <h2 style={{ fontSize: org.logo_data ? 14 : 18 }}>{org.org_name || 'Sunny BK'}</h2>
+        {org.tagline && <p>{org.tagline}</p>}
       </div>
 
       <nav className="sidebar-nav">
